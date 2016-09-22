@@ -5,52 +5,56 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using MiscUtil.IO;
+using MiscUtil.Conversion;
 
 namespace CadObjEditor
 {
     class BattletoadsLoader : BaseLoader
     {
         const int objCount = 114;
-        const int objSize = 11;
         const int startAddr = 0x1EDFE;
         public GameObjectList load(byte[] romdata)
         {
             var objects = new List<GameObject>();
-            for (int i = 0; i < objCount; i++)
-            {
-                byte type = romdata[startAddr + i * objSize + 0];
-                byte xScreen = romdata[startAddr + i * objSize + 1];
-                byte x   = romdata[startAddr + i * objSize + 2];
-                byte x1Screen   = romdata[startAddr + i * objSize + 3];
-                byte x1 = romdata[startAddr + i * objSize + 4];
-                byte yScreen   = romdata[startAddr + i * objSize + 5];
-                byte y    = romdata[startAddr + i * objSize + 6];
-                byte zScreen = romdata[startAddr + i * objSize + 7];
-                byte z   = romdata[startAddr + i * objSize + 8];
-                byte blinkTime  = romdata[startAddr + i * objSize + 9];
-                byte jumpPower  = romdata[startAddr + i * objSize + 10];
-                var obj = new BattletoadsGameObject(type, xScreen, x, x1Screen, x1, yScreen, y, zScreen, z, blinkTime, jumpPower);
-                objects.Add(obj);
-            }
+                using (var br = new EndianBinaryReader(EndianBitConverter.Big, new MemoryStream(romdata)))
+                {
+                    br.BaseStream.Seek(startAddr, SeekOrigin.Begin);
+                    for (int i = 0; i < objCount; i++)
+                    {
+                        byte type = br.ReadByte();
+                        UInt16 x = br.ReadUInt16();
+                        UInt16 x1 = br.ReadUInt16();
+                        UInt16 y = br.ReadUInt16();
+                        UInt16 z = br.ReadUInt16();
+                        byte blinkTime = br.ReadByte();
+                        byte jumpPower = br.ReadByte();
+                        var obj = new BattletoadsGameObject(type, x, x1, y, z, blinkTime, jumpPower);
+                        objects.Add(obj);
+                    }
+                }
             return new GameObjectList(objects);
         }
 
         public void save(byte[] romdata, GameObjectList objects)
         {
-            for (int i = 0; i < objCount; i++)
+
+            using (var bw = new EndianBinaryWriter(EndianBitConverter.Big, new MemoryStream(romdata)))
             {
-                var obj = (BattletoadsGameObject)objects.GetList()[i];
-                romdata[startAddr + i * objSize + 0] = (byte)obj.type;
-                romdata[startAddr + i * objSize + 1] = (byte)obj.xScreen;
-                romdata[startAddr + i * objSize + 2] = (byte)obj.x;
-                romdata[startAddr + i * objSize + 3] = (byte)obj.x1Screen;
-                romdata[startAddr + i * objSize + 4] = (byte)obj.x1;
-                romdata[startAddr + i * objSize + 5] = (byte)obj.yScreen;
-                romdata[startAddr + i * objSize + 6] = (byte)obj.y;
-                romdata[startAddr + i * objSize + 7] = (byte)obj.zScreen;
-                romdata[startAddr + i * objSize + 8] = (byte)obj.z;
-                romdata[startAddr + i * objSize + 9] = (byte)obj.blinkTime;
-                romdata[startAddr + i * objSize +10] = (byte)obj.jumpPower;
+                bw.BaseStream.Seek(startAddr, SeekOrigin.Begin);
+                for (int i = 0; i < objCount; i++)
+                {
+                    var obj = (BattletoadsGameObject)objects.GetList()[i];
+                    bw.Write((byte)obj.type);
+                    bw.Write((UInt16)obj.x);
+                    bw.Write((UInt16)obj.x1);
+                    bw.Write((UInt16)obj.y);
+                    bw.Write((UInt16)obj.z);
+                    bw.Write((byte)obj.blinkTime);
+                    bw.Write((byte)obj.jumpPower);
+                }
             }
         }
 
@@ -127,31 +131,22 @@ namespace CadObjEditor
 
     public class BattletoadsGameObject : GameObject
     {
-        public BattletoadsGameObject(int type, int xScreen, int x, int x1Screen, int x1, int yScreen, int y, int zScreen, int z, int blinkTime, int jumpPower)
+        public BattletoadsGameObject(int type, int x, int x1, int y, int z, int blinkTime, int jumpPower)
         {
             this.type = type;
-            this.xScreen = xScreen;
             this.x = x;
-            this.x1Screen = x1Screen;
             this.x1 = x1;
-            this.yScreen = yScreen;
             this.y = y;
-            this.zScreen = zScreen;
             this.z = z;
             this.blinkTime = blinkTime;
             this.jumpPower = jumpPower;
         }
         public int type { get; set; }
-        public int xScreen { get; set; }
         public int x { get; set; }
-        public int x1Screen { get; set; }
         public int x1 { get; set; }
-        public int yScreen { get; set; }
         public int y { get; set; }
-        public int zScreen { get; set; }
         public int z { get; set; }
         public int blinkTime { get; set; }
         public int jumpPower { get; set; }
-
     }
 }

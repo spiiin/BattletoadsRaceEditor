@@ -36,7 +36,7 @@ namespace CadObjEditor
             loader.initDataSource(this);
             for (int i = 0; i < dgvGameObjects.Columns.Count; i++)
             {
-                dgvGameObjects.Columns[i].Width = 45;
+                dgvGameObjects.Columns[i].Width = 55;
             }
         }
 
