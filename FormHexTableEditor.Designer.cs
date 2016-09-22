@@ -53,6 +53,7 @@
             this.dgvGameObjects.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvGameObjects_CellFormatting);
             this.dgvGameObjects.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvGameObjects_CellParsing);
             this.dgvGameObjects.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvGameObjects_CellValueChanged);
+            this.dgvGameObjects.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgvGameObjects_DataError);
             // 
             // toolStrip1
             // 

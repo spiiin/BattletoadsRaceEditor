@@ -104,5 +104,14 @@ namespace CadObjEditor
         {
             tbSave.Enabled = true;
         }
+
+        private void dgvGameObjects_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                MessageBox.Show("Invalid format: " + e.Exception.Message);
+            }
+            e.ThrowException = false;
+        }
     }
 }
