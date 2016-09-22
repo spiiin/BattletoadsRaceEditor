@@ -1,4 +1,4 @@
-**Редактор трасс для игры Battletoads для NES**
+**Р РµРґР°РєС‚РѕСЂ С‚СЂР°СЃСЃ РґР»СЏ РёРіСЂС‹ Battletoads РґР»СЏ NES**
 
-Расшифровка кодов объектов:
+Р Р°СЃС€РёС„СЂРѕРІРєР° РєРѕРґРѕРІ РѕР±СЉРµРєС‚РѕРІ:
 https://github.com/spiiin/feos-tas/blob/master/DisAssemble/RandomStuff/bt_object_list.asm
